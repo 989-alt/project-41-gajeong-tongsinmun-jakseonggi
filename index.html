@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>가정통신문 자동 작성기 · Letter Studio</title>
+<meta name="description" content="행사·견학·안전·상담·방학·준비물·행사 7종 템플릿 가정통신문을 즉시 PDF로." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Noto+Serif+KR:wght@500;700;900&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+<a href="#form" class="visually-hidden focusable">본문으로 건너뛰기</a>
+
+<div class="app" id="app">
+  <aside class="sidebar" aria-label="사이드바">
+    <div class="brand">
+      <div class="brand-mark" aria-hidden="true">L</div>
+      <div class="brand-text">
+        <div class="brand-name">Letter Studio</div>
+        <div class="brand-sub">가정통신문 자동 작성기</div>
+      </div>
+    </div>
+
+    <section class="side-section" aria-labelledby="school-h">
+      <header class="side-section-header">
+        <h2 id="school-h">학교·반 정보</h2>
+        <button type="button" class="link-btn" id="reset-school" aria-label="학교 정보 초기화">초기화</button>
+      </header>
+      <div class="field-grid">
+        <div class="field">
+          <label for="schoolName">학교명</label>
+          <input id="schoolName" name="schoolName" type="text" autocomplete="organization" placeholder="예) 한빛초등학교" />
+        </div>
+        <div class="field two-col">
+          <div>
+            <label for="grade">학년</label>
+            <input id="grade" name="grade" type="text" inputmode="numeric" placeholder="예) 3" />
+          </div>
+          <div>
+            <label for="classNo">반</label>
+            <input id="classNo" name="classNo" type="text" inputmode="numeric" placeholder="예) 4" />
+          </div>
+        </div>
+        <div class="field">
+          <label for="teacherName">담임 교사</label>
+          <input id="teacherName" name="teacherName" type="text" placeholder="예) 김민호" />
+        </div>
+      </div>
+    </section>
+
+    <section class="side-section" aria-labelledby="tpl-h">
+      <header class="side-section-header"><h2 id="tpl-h">템플릿</h2></header>
+      <div class="tpl-list" id="tpl-list" role="listbox" aria-label="템플릿 7종"></div>
+    </section>
+
+    <section class="side-section" aria-labelledby="recent-h">
+      <header class="side-section-header"><h2 id="recent-h">최근 통신문</h2></header>
+      <div class="recent-list" id="recent-list" aria-live="polite"></div>
+    </section>
+
+    <section class="side-section side-footer">
+      <div class="row">
+        <button type="button" class="ghost-btn" id="export-json">JSON 내보내기</button>
+        <button type="button" class="ghost-btn" id="import-json">JSON 가져오기</button>
+        <input type="file" id="import-file" accept="application/json" hidden />
+      </div>
+      <div class="row">
+        <button type="button" class="ghost-btn" id="theme-toggle" aria-pressed="false">라이트 모드</button>
+      </div>
+    </section>
+  </aside>
+
+  <main class="form-pane" aria-label="작성 폼" id="form">
+    <header class="pane-header">
+      <div class="eyebrow" id="active-eyebrow">템플릿을 선택해 주세요</div>
+      <h1 class="pane-title" id="active-title">가정통신문 자동 작성기</h1>
+      <p class="pane-sub">7종 템플릿에서 골라 빈 칸만 채우면 인쇄·PDF용 가정통신문이 즉시 완성됩니다.</p>
+    </header>
+    <form id="letter-form" autocomplete="off" novalidate>
+      <div id="dynamic-fields" class="dynamic-fields"></div>
+    </form>
+  </main>
+
+  <section class="preview-pane" aria-label="미리보기">
+    <div class="preview-toolbar">
+      <div class="preview-toolbar-left">
+        <span class="dot" aria-hidden="true"></span>
+        <span class="preview-label">미리보기</span>
+      </div>
+      <div class="preview-toolbar-right">
+        <button type="button" class="primary-btn" id="download-pdf" disabled>PDF 다운로드</button>
+        <button type="button" class="ghost-btn" id="print-btn" disabled>인쇄</button>
+      </div>
+    </div>
+    <div class="preview-frame" id="preview-frame">
+      <article class="paper" id="paper" aria-live="polite">
+        <div class="paper-empty" id="paper-empty">
+          <div class="paper-empty-mark" aria-hidden="true">✉</div>
+          <div class="paper-empty-title">왼쪽에서 템플릿을 선택해 주세요</div>
+          <div class="paper-empty-sub">7종 템플릿 중 하나를 고르면 통신문이 여기 미리보기됩니다.</div>
+        </div>
+        <div class="paper-doc" id="paper-doc" hidden>
+          <header class="doc-header">
+            <div class="doc-school" id="doc-school">학교명</div>
+            <div class="doc-meta" id="doc-meta">학년 반 · 담임</div>
+          </header>
+          <hr class="rule" />
+          <h1 class="doc-title" id="doc-title">제목</h1>
+          <div class="doc-summary" id="doc-summary"></div>
+          <dl class="doc-fields" id="doc-fields"></dl>
+          <div class="doc-body" id="doc-body"></div>
+          <hr class="rule rule-soft" />
+          <footer class="doc-footer">
+            <div class="doc-date" id="doc-date"></div>
+            <div class="doc-signature" id="doc-signature">
+              <div class="sig-line"></div>
+              <div class="sig-label" id="doc-sig-label">담임 교사</div>
+            </div>
+          </footer>
+        </div>
+      </article>
+    </div>
+  </section>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script type="module" src="./app.js"></script>
+</body>
+</html>
